@@ -1,3 +1,7 @@
+* {
+  margin: 0;
+  padding: 0;
+}
 html, body {
   background: lightblue;
   overflow: hidden; 
@@ -6,4 +10,24 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
+  overflow: hidden;
+}
+div {
+  margin: 0; 
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+textarea, input {
+  margin: 5px;
+  padding: 2px 4px;
+}
+textarea {
+  width: 142px;
+  height: 65px;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+input {
+  float: right;
 }

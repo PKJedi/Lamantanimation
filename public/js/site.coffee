@@ -9,6 +9,9 @@ w = $(window).width()
 h = $(window).height()
 lastTime = (new Date()).getTime()
 originPos = w/2
+players = [{x: -200, y: 86, dx: 0, dy: 0}]
+animating = true
+animateNext = true
 
 generateWavePositions = ->
   positions = []
@@ -43,18 +46,73 @@ drawMovingWaves = (ctx, time) ->
     ctx.arc pos.x + 37, pos.y - 16, 20, Math.PI/8, 7/8*Math.PI, false
     ctx.stroke()
   
+drawTextBubble = (ctx) ->
+  ctx.fillStyle = 'rgb(255,255,255)'
+  ctx.strokeStyle = 'rgb(0,0,0)'
+  ctx.beginPath()
+  ctx.moveTo 0, 20
+  ctx.quadraticCurveTo -20, 20, -20, -20
+  ctx.lineTo -100, -20
+  ctx.quadraticCurveTo -120, -20, -120, -40
+  ctx.lineTo -120, -100
+  ctx.quadraticCurveTo -120, -120, -100, -120
+  ctx.lineTo 20, -120
+  ctx.quadraticCurveTo 40, -120, 40, -100
+  ctx.lineTo 40, -40
+  ctx.quadraticCurveTo 40, -20, 20, -20
+  ctx.lineTo -10, -20
+  ctx.quadraticCurveTo -10, 20, 0, 20
+  ctx.fill()
+  ctx.stroke()
+
+drawText = (ctx, x, y, text, width, maxLines) ->
+  lineNum = 0
+  overflow = ''
+  for line in text.split '\n'
+    continue if lineNum >= maxLines
+    line = overflow + line
+    overflow = ''
+    while ctx.measureText(line).width > width && line.length > 2
+      overflow = line.slice(-1) + overflow
+      line = line.slice 0, -1
+    ctx.fillText line, x, y + lineNum*20, width
+    lineNum += 1
+  drawText ctx, x, y + lineNum*20, overflow, width, maxLines - lineNum if lineNum < maxLines
+
+drawPlayerText = (ctx, x, y, text) ->
+  ctx.save()
+  ctx.translate x + 60, y - 10
+  drawTextBubble ctx
+  ctx.fillStyle = 'rgb(0,0,0)'
+  drawText ctx, -110, -110, text, 140, 4
+  
+  ctx.restore()
 
 getDrawImage = (ctx, img) ->
   drawImage = ->
+    if !animating && !animateNext
+      return
+    animateNext = false
     time = (new Date()).getTime()
 
     ctx.clearRect w/2 - 300, h/2 - 200, 600, 400
+    for player in players
+      ctx.clearRect w/2 + player.x - 100, h/2 + player.y - 143, 202, 186
+      player.x += player.dx
+      player.y += player.dy
+      player.dx = 0
+      player.dy = 0
     drawMovingWaves ctx, time
     drawBobbingImage ctx, img, time,       500, 215, w/2,  h/2
-    drawBobbingImage ctx, img, time - 250, 200, 86,  w/2 - 160, h/2 + 60
+    
+    ctx.font = '14px sans-serif'
+    ctx.textBaseline = 'top'
+
+    for player in players
+      drawBobbingImage ctx, img, time - 250, 200, 86, w/2 + player.x, h/2 + player.y
+      drawPlayerText ctx, w/2 + player.x, h/2 + player.y, player.text if player.text
     
     lastTime = time
-    setTimeout drawImage, 35
 
 # just for loading svg in supporting browser, needs refactor
 waiterProto = {
@@ -98,13 +156,20 @@ $ ->
   $('body').append flashRows.join '\n' if !support
   
   ctx = $('#canvas')[0].getContext '2d'
+  w = $(window).width()
+  h = $(window).height()
+  ctx.canvas.width = w
+  ctx.canvas.height = h
+  ctx.clearRect 0, 0, w, h
+
   img = new Image()
   waiter = Object.create waiterProto
   waiter.link img, [
     '/img/lamantiini.svg', 
     '/img/lamantiini.png'
   ]
-  img.onload = getDrawImage ctx, img
+  img.onload = ->
+    setInterval (getDrawImage ctx, img), 35
   waiter.check()
   
   $(window).resize ->
@@ -114,3 +179,53 @@ $ ->
     ctx.canvas.width = w
     ctx.canvas.height = h
     wavePositions = generateWavePositions()
+  
+  socket = new io.Socket('tappe.lu', {port: 8082})
+  socket.connect()
+  socket.on 'message', (message) ->
+    found = false
+    for player in players
+      if player.sessionId == message.sessionId
+        found = true
+        player.dx = message.x - player.x + message.dx
+        player.dy = message.y - player.y + message.dy
+        player.text = message.text
+    if !found
+      players.push message
+    animateNext = true
+      
+
+  window.pressed = {up: 0, down: 0, left: 0, right: 0}
+  $(document).bind 'keydown', (event) ->
+    switch event.keyCode
+      when 37 then pressed.left = 1
+      when 38 then pressed.up = 1
+      when 39 then pressed.right = 1
+      when 40 then pressed.down = 1
+  $(document).bind 'keyup', (event) ->
+    switch event.keyCode
+      when 37 then pressed.left = 0
+      when 38 then pressed.up = 0
+      when 39 then pressed.right = 0
+      when 40 then pressed.down = 0
+  $('textarea').bind 'keydown', ->
+    return
+  .bind 'keyup', ->
+    animateNext = true
+    players[0].text = $('textarea').val()
+    socket.send players[0]
+  $('input.music').click ->
+    if $('audio')[0].paused
+      $('audio')[0].play()
+    else
+      $('audio')[0].pause()
+  $('input.animation').click ->
+    animating = !animating
+  
+  setInterval ->
+    players[0].dx += (pressed.right - pressed.left)*5
+    players[0].dy += (pressed.down - pressed.up)*5
+    if players[0].dx || players[0].dy
+      socket.send players[0]
+      animateNext = true
+  , 33
