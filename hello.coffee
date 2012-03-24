@@ -29,7 +29,7 @@ footer = '''
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <!--[if IE]><script src="/js/html5.js"></script><![endif]-->
   <script src="/js/mt.js"></script> <!-- Mersenne Twister for seedable random -->
-  <script src="http://tappe.lu:8081/socket.io/socket.io.js"></script>
+  <script src="http://[HOST]/socket.io/socket.io.js"></script>
   <script src="/js/site.js"></script>
 <audio preload="auto" autobuffer audio="true" src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3">
   <source src="Nerf_Herder_-_Stand_By_Your_Manatee.ogg" type="audio/ogg; codecs=vorbis" />
@@ -41,6 +41,8 @@ footer = '''
 pageString = ->
   header + "  " + ((content for content in arguments).join "\n  ") + footer
 
+port = parseInt process.argv[2], 10
+
 server = http.createServer (req, res) ->
   res.writeHead 200, {'Content-Type': 'text/html'}
   page = [
@@ -49,8 +51,10 @@ server = http.createServer (req, res) ->
     '<a href="http://oglio.com/nerf-herder-iv">Nerf Herder - (Stand By Your) Manatee</a>',
     '<textarea>Manatee chat pool\narrow keys or touch\nedit this textarea\ndrag an image here</textarea></div>',
   ]
-  res.end pageString page...
-server.listen 8081
+  responseString = pageString page...
+  responseString = responseString.replace /\[HOST\]/, req.headers.host
+  res.end responseString
+server.listen port
 
 io = (require 'socket.io').listen server
 
@@ -109,6 +113,6 @@ io.sockets.on 'connection', (socket) ->
     socket.broadcast.emit 'player', message
     delete buffer['' + socket.id]
 
-console.log 'Server running at *:8081'
+console.log 'Server running at *:' + port
 
 
