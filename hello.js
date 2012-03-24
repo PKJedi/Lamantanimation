@@ -27,13 +27,15 @@
   port = parseInt(process.argv[2], 10);
 
   server = http.createServer(function(req, res) {
-    var page, responseString;
+    var host, page, responseString;
     res.writeHead(200, {
       'Content-Type': 'text/html'
     });
     page = ['<canvas id="canvas" width="1920" height="1200"></canvas>', '<div><input type="button" value="music" class="music" /><input type="button" value="animation" class="animation" />', '<a href="http://oglio.com/nerf-herder-iv">Nerf Herder - (Stand By Your) Manatee</a>', '<textarea>Manatee chat pool\narrow keys or touch\nedit this textarea\ndrag an image here</textarea></div>'];
     responseString = pageString.apply(null, page);
-    responseString = responseString.replace(/\[HOST\]/, req.headers.host);
+    host = req.headers.host;
+    if (host.indexOf(':') === -1) host += ':' + port;
+    responseString = responseString.replace(/\[HOST\]/, host);
     return res.end(responseString);
   });
 

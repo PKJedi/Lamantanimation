@@ -52,7 +52,12 @@ server = http.createServer (req, res) ->
     '<textarea>Manatee chat pool\narrow keys or touch\nedit this textarea\ndrag an image here</textarea></div>',
   ]
   responseString = pageString page...
-  responseString = responseString.replace /\[HOST\]/, req.headers.host
+
+  host = req.headers.host
+  if host.indexOf(':') == -1
+    host += ':' + port
+
+  responseString = responseString.replace /\[HOST\]/, host
   res.end responseString
 server.listen port
 
