@@ -17,7 +17,7 @@ set :admin_runner, 'pkjedi'
 set :scm, :git
 set :deploy_via, :remote_cache
 role :app, host
-set :deploy_to, "/var/www/node/#{application}/#{node_env}"
+set(:deploy_to) { "/var/www/node/#{application}/#{node_env}" }
 set :use_sudo, true
 default_run_options[:pty] = true
 
