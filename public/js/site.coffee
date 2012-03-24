@@ -34,7 +34,7 @@ generateWavePositions = ->
   while Math.abs(pos.x)-30 < w/2 || Math.abs(pos.y) < h/2
     r += (5 + wMT.random()*10)/(r/200)
     phi = r/15
-    pos = {x: r*Math.cos(phi), y: r*Math.sin(phi), lastPos: {x: 0, y: 0}}
+    pos = {x: r*Math.cos(phi), y: r*Math.sin(phi), lastX: 0, lastY: 0}
     positions.push pos if Math.abs(pos.x)-30 < w/2 && Math.abs(pos.y) < h/2
   return positions
 wavePositions = generateWavePositions()
@@ -45,18 +45,18 @@ drawMovingWaves = (ctx, time) ->
   ctx.strokeStyle = 'rgb(0,0,255)'
   
   for start in wavePositions
-    pos =
-      x: (originPos + w/2 + start.x)%wMove - 60
-      y: (start.y + h/2)
-    w
-    ctx.clearRect start.lastPos.x - 21, start.lastPos.y - 21, 82, 42
-    start.lastPos = pos
+    x = (originPos + w/2 + start.x)%wMove - 60
+    y = (start.y + h/2)
+    
+    ctx.clearRect start.lastX - 21, start.lastY - 21, 82, 42
+    start.lastX = x
+    start.lastY = y
     ctx.clearRect 0, 0, 82, 42
     ctx.beginPath()
-    ctx.arc pos.x, pos.y, 20, -Math.PI/8, -7/8*Math.PI, true
+    ctx.arc x, y, 20, -Math.PI/8, -7/8*Math.PI, true
     ctx.stroke()
     ctx.beginPath()
-    ctx.arc pos.x + 37, pos.y - 16, 20, Math.PI/8, 7/8*Math.PI, false
+    ctx.arc x + 37, y - 16, 20, Math.PI/8, 7/8*Math.PI, false
     ctx.stroke()
   
 drawTextBubble = (ctx) ->
@@ -117,7 +117,7 @@ getDrawImage = (ctx, img) ->
 
     for coords in clearBuffer
       ctx.clearRect coords...
-    clearBuffer = []
+    clearBuffer.length = 0
 
     for player in players
       player.x += player.dx

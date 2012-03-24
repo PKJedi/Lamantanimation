@@ -1,11 +1,7 @@
 (function() {
-  var animateNext, animating, drawBobbingImage, drawMovingWaves, drawPlayerImage, drawPlayerText, drawText, drawTextBubble, flashRows, generateWavePositions, getDrawImage, h, hostImages, hostParts, lastTime, originPos, scale, w, waiterProto, wavePositions, welcomeScreen;
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __indexOf = Array.prototype.indexOf || function(item) {
-    for (var i = 0, l = this.length; i < l; i++) {
-      if (this[i] === item) return i;
-    }
-    return -1;
-  };
+  var animateNext, animating, drawBobbingImage, drawMovingWaves, drawPlayerImage, drawPlayerText, drawText, drawTextBubble, flashRows, generateWavePositions, getDrawImage, h, hostImages, hostParts, lastTime, originPos, scale, w, waiterProto, wavePositions, welcomeScreen,
+    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
   drawBobbingImage = function(ctx, img, time, w, h, x, y) {
     ctx.save();
     ctx.translate(x, y);
@@ -13,13 +9,21 @@
     ctx.drawImage(img, -w / 2, -h / 2, w, h);
     return ctx.restore();
   };
+
   w = $(window).width();
+
   h = $(window).height();
+
   scale = 980 / w;
+
   w /= scale;
+
   h /= scale;
+
   lastTime = (new Date()).getTime();
+
   originPos = w / 2;
+
   window.players = [
     {
       x: -200,
@@ -28,13 +32,17 @@
       dy: 0
     }
   ];
+
   hostParts = document.location.hostname.split('.');
-  if (hostParts.length > 2) {
-    players[0].host = hostParts[0];
-  }
+
+  if (hostParts.length > 2) players[0].host = hostParts[0];
+
   animating = true;
+
   animateNext = true;
+
   hostImages = {};
+
   welcomeScreen = function() {
     var html;
     return html = '\
@@ -42,6 +50,7 @@
 </div>\
 ';
   };
+
   generateWavePositions = function() {
     var phi, pos, positions, r, wMT;
     positions = [];
@@ -58,10 +67,8 @@
       pos = {
         x: r * Math.cos(phi),
         y: r * Math.sin(phi),
-        lastPos: {
-          x: 0,
-          y: 0
-        }
+        lastX: 0,
+        lastY: 0
       };
       if (Math.abs(pos.x) - 30 < w / 2 && Math.abs(pos.y) < h / 2) {
         positions.push(pos);
@@ -69,32 +76,33 @@
     }
     return positions;
   };
+
   wavePositions = generateWavePositions();
+
   drawMovingWaves = function(ctx, time) {
-    var pos, start, wMove, _i, _len, _results;
+    var start, wMove, x, y, _i, _len, _results;
     wMove = w + 90;
     originPos = (wMove + originPos - (time - lastTime) / 20) % wMove;
     ctx.strokeStyle = 'rgb(0,0,255)';
     _results = [];
     for (_i = 0, _len = wavePositions.length; _i < _len; _i++) {
       start = wavePositions[_i];
-      pos = {
-        x: (originPos + w / 2 + start.x) % wMove - 60,
-        y: start.y + h / 2
-      };
-      w;
-      ctx.clearRect(start.lastPos.x - 21, start.lastPos.y - 21, 82, 42);
-      start.lastPos = pos;
+      x = (originPos + w / 2 + start.x) % wMove - 60;
+      y = start.y + h / 2;
+      ctx.clearRect(start.lastX - 21, start.lastY - 21, 82, 42);
+      start.lastX = x;
+      start.lastY = y;
       ctx.clearRect(0, 0, 82, 42);
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 20, -Math.PI / 8, -7 / 8 * Math.PI, true);
+      ctx.arc(x, y, 20, -Math.PI / 8, -7 / 8 * Math.PI, true);
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(pos.x + 37, pos.y - 16, 20, Math.PI / 8, 7 / 8 * Math.PI, false);
+      ctx.arc(x + 37, y - 16, 20, Math.PI / 8, 7 / 8 * Math.PI, false);
       _results.push(ctx.stroke());
     }
     return _results;
   };
+
   drawTextBubble = function(ctx) {
     ctx.fillStyle = 'rgb(255,255,255)';
     ctx.strokeStyle = 'rgb(0,0,0)';
@@ -114,6 +122,7 @@
     ctx.fill();
     return ctx.stroke();
   };
+
   drawText = function(ctx, x, y, text, width, maxLines) {
     var line, lineNum, overflow, _i, _len, _ref;
     lineNum = 0;
@@ -121,9 +130,7 @@
     _ref = text.split('\n');
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       line = _ref[_i];
-      if (lineNum >= maxLines) {
-        continue;
-      }
+      if (lineNum >= maxLines) continue;
       line = overflow + line;
       overflow = '';
       while (ctx.measureText(line).width > width && line.length > 2) {
@@ -137,6 +144,7 @@
       return drawText(ctx, x, y + lineNum * 20, overflow, width, maxLines - lineNum);
     }
   };
+
   drawPlayerText = function(ctx, x, y, text) {
     ctx.save();
     ctx.translate(x + 60, y - 10);
@@ -145,20 +153,20 @@
     drawText(ctx, -110, -110, text, 140, 4);
     return ctx.restore();
   };
+
   drawPlayerImage = function(ctx, x, y, image) {
     ctx.save();
     ctx.translate(x, y);
     ctx.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height);
     return ctx.restore();
   };
+
   getDrawImage = function(ctx, img) {
     var clearBuffer, drawImage;
     clearBuffer = [];
     return drawImage = function() {
-      var coords, player, playerImage, time, _i, _j, _k, _len, _len2, _len3, _ref;
-      if (!animating && !animateNext) {
-        return;
-      }
+      var coords, player, playerImage, time, _i, _j, _k, _len, _len2, _len3;
+      if (!animating && !animateNext) return;
       animateNext = false;
       time = (new Date()).getTime();
       ctx.clearRect(w / 2 - 300, h / 2 - 200, 600, 400);
@@ -166,21 +174,15 @@
         coords = clearBuffer[_i];
         ctx.clearRect.apply(ctx, coords);
       }
-      clearBuffer = [];
+      clearBuffer.length = 0;
       for (_j = 0, _len2 = players.length; _j < _len2; _j++) {
         player = players[_j];
         player.x += player.dx;
         player.y += player.dy;
         clearBuffer.push([w / 2 + player.x - 102, h / 2 + player.y - 143, 204, 200]);
-        if ((_ref = player.scale) == null) {
-          player.scale = 1;
-        }
-        if (player.dx < 0) {
-          player.scale = -1;
-        }
-        if (player.dx > 0) {
-          player.scale = 1;
-        }
+        if (player.scale == null) player.scale = 1;
+        if (player.dx < 0) player.scale = -1;
+        if (player.dx > 0) player.scale = 1;
       }
       players[0].dx = 0;
       players[0].dy = 0;
@@ -198,9 +200,7 @@
         ctx.translate(w / 2 + player.x, h / 2 + player.y);
         ctx.scale(player.scale, 1);
         drawBobbingImage(ctx, playerImage, time - 250, 200, 93, 0, 0);
-        if (player.text) {
-          drawPlayerText(ctx, 0, 0, player.text);
-        }
+        if (player.text) drawPlayerText(ctx, 0, 0, player.text);
         if (player.Image && player.Image.width) {
           drawPlayerImage(ctx, 0, 0, player.Image);
         }
@@ -209,29 +209,28 @@
       return lastTime = time;
     };
   };
+
   waiterProto = {
     img: null,
     possibilities: [],
     pos: 0,
     drawn: false,
     link: function(img, possibilities) {
+      var _this = this;
       this.img = img;
       this.possibilities = possibilities;
-      this.check = __bind(function() {
-        if (this.drawn) {
-          return;
-        }
-        if (this.possibilities[this.pos]) {
-          return this["try"]();
-        }
-      }, this);
-      this["try"] = __bind(function() {
-        this.img.src = this.possibilities[this.pos];
-        return this.pos += 1;
-      }, this);
+      this.check = function() {
+        if (_this.drawn) return;
+        if (_this.possibilities[_this.pos]) return _this["try"]();
+      };
+      this["try"] = function() {
+        _this.img.src = _this.possibilities[_this.pos];
+        return _this.pos += 1;
+      };
       return img.onerror = this.check;
     }
   };
+
   if (typeof Object.create !== 'function') {
     Object.create = function(o) {
       var F;
@@ -240,7 +239,9 @@
       return new F();
     };
   }
+
   flashRows = ['  <object type="application/x-shockwave-flash" width="0" height="0" data="xspf_player_slim.swf?playlist_url=pl.xspf&autoplay=1&repeat_playlist=1">', '    <param name="movie" value=xspf_player_slim.swf?playlist_url=pl.xspf&autoplay=1&repeat_playlist=1" />', '  </object>'];
+
   $(function() {
     var $a, a, ctx, editedText, flashPlaying, hostImage, img, key, port, sendPlayer, support, value, waiter;
     $a = $('audio');
@@ -309,12 +310,10 @@
       return wavePositions = generateWavePositions();
     });
     port = 8081;
-    if ($.browser.opera) {
-      port = 80;
-    }
+    if ($.browser.opera) port = 80;
     window.socket = io.connect('http://tappe.lu:' + port);
     socket.on('player', function(message) {
-      var found, player, _i, _len, _ref;
+      var found, player, _i, _len;
       found = false;
       for (_i = 0, _len = players.length; _i < _len; _i++) {
         player = players[_i];
@@ -326,26 +325,16 @@
             player.dx = 0;
             player.dy = 0;
           } else {
-            if (message.dx != null) {
-              player.dx = message.dx;
-            }
-            if (message.dy != null) {
-              player.dy = message.dy;
-            }
+            if (message.dx != null) player.dx = message.dx;
+            if (message.dy != null) player.dy = message.dy;
           }
-          if (message.text != null) {
-            player.text = message.text;
-          }
+          if (message.text != null) player.text = message.text;
           if (message.image && player.image !== message.image) {
             player.image = message.image;
-            if ((_ref = player.Image) == null) {
-              player.Image = new Image();
-            }
+            if (player.Image == null) player.Image = new Image();
             player.Image.src = player.image;
           }
-          if (message.host != null) {
-            player.host = message.host;
-          }
+          if (message.host != null) player.host = message.host;
         }
       }
       if (!found && message.id) {
@@ -358,12 +347,10 @@
       return animateNext = true;
     });
     socket.on('you', function(message) {
-      var _base, _ref;
+      var _base;
       if ((message.image != null)) {
         players[0].image = message.image;
-        if ((_ref = (_base = players[0]).Image) == null) {
-          _base.Image = new Image();
-        }
+        if ((_base = players[0]).Image == null) _base.Image = new Image();
         return players[0].Image.src = players[0].image;
       }
     });
@@ -391,9 +378,7 @@
           return;
         }
         players[0].image = loadEvent.target.result;
-        if (!players[0].Image) {
-          players[0].Image = new Image();
-        }
+        if (!players[0].Image) players[0].Image = new Image();
         return players[0].Image.src = loadEvent.target.result;
       };
       reader.readAsDataURL(file);
@@ -507,9 +492,7 @@
     })();
     editedText = false;
     $('textarea').bind('keydown', function() {}).bind('click', function() {
-      if (!editedText) {
-        $('textarea').val('');
-      }
+      if (!editedText) $('textarea').val('');
       return editedText = true;
     }).bind('keyup', function() {
       animateNext = true;
@@ -536,9 +519,8 @@
       players[0].dx += (pressed.right - pressed.left) * 5;
       players[0].dy += (pressed.down - pressed.up) * 5;
       sendPlayer(players[0]);
-      if (players[0].dx || players[0].dy) {
-        return animateNext = true;
-      }
+      if (players[0].dx || players[0].dy) return animateNext = true;
     }, 33);
   });
+
 }).call(this);
