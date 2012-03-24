@@ -4,6 +4,7 @@
 require 'capistrano/ext/multistage'
 set :stages, %w[staging production]
 set :default_stage, 'staging'
+set :node_env, 'staging'
 
 set :application, "Lamantanimation"
 set :node_file, "hello.js"
@@ -21,20 +22,20 @@ set :use_sudo, true
 
 namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
-    run "sudo start #{application}_#{node_env}"
+    run "#{sudo} start #{application}_#{node_env}"
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "sudo stop #{application}_#{node_env}"
+    run "#{sudo} stop #{application}_#{node_env}"
   end
 
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "sudo restart #{application}_#{node_env} || sudo start #{application}_#{node_env}"
+    run "#{sudo} restart #{application}_#{node_env} || sudo start #{application}_#{node_env}"
   end
 
   task :create_deploy_to_with_sudo, :roles => :app do
-    run "sudo mkdir -p #{deploy_to}"
-    run "sudo chown #{admin_runner}:#{admin_runner} #{deploy_to}"
+    run "#{sudo} mkdir -p #{deploy_to}"
+    run "#{sudo} chown #{admin_runner}:#{admin_runner} #{deploy_to}"
   end
 
   task :write_upstart_script, :roles => :app do
@@ -55,12 +56,11 @@ namespace :deploy do
   respawn
 UPSTART
   put upstart_script, "/tmp/#{application}_upstart.conf"
-    run "sudo mv /tmp/#{application}_upstart.conf /etc/init/#{application}_#{node_env}.conf"
+    run "#{sudo} mv /tmp/#{application}_upstart.conf /etc/init/#{application}_#{node_env}.conf"
   end
 
 end
 
 before 'deploy:setup', 'deploy:create_deploy_to_with_sudo'
 after 'deploy:setup', 'deploy:write_upstart_script'
-after "deploy:finalize_update"
 
