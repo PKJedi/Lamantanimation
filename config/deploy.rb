@@ -2,9 +2,10 @@
 # Lamantanimation deployment with capistrano
 
 require 'capistrano/ext/multistage'
+
+set :stage_dir, 'config/deploy'
 set :stages, %w[staging production]
 set :default_stage, 'staging'
-set :node_env, 'staging'
 
 set :application, "Lamantanimation"
 set :node_file, "hello.js"
