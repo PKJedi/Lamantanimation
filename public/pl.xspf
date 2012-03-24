@@ -2,8 +2,8 @@
 <playlist version="0" xmlns = "http://xspf.org/ns/0/">
   <trackList>
    <track>
-    <location>manatee.mp3</location>
-    <annotation>Manatee song</annotation>
+    <location>Nerf_Herder_-_Stand_By_Your_Manatee.mp3</location>
+    <annotation>Nerf Herder - (Stand By Your) Manatee</annotation>
    </track>
   </trackList>
 </playlist>

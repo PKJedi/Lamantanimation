@@ -21,13 +21,24 @@ div {
 textarea, input {
   margin: 5px;
   padding: 2px 4px;
+  opacity: 0.7;
 }
 textarea {
   width: 142px;
   height: 65px;
   font-family: sans-serif;
   overflow: hidden;
+  display: block;
 }
 input {
   float: right;
+}
+a {
+  font-family: Helvetica;
+  font-size: 16px;
+  padding: 3px 4px;
+  margin: 6px;
+  background: white;
+  display: inline-block; 
+  opacity: 0.7;
 }
