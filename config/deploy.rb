@@ -18,7 +18,7 @@ set :deploy_via, :remote_cache
 role :app, host
 set :deploy_to, "/var/www/node/#{application}/#{node_env}"
 set :use_sudo, true
-#default_run_options[:pty] = true
+default_run_options[:pty] = true
 
 namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
@@ -35,7 +35,7 @@ namespace :deploy do
 
   task :create_deploy_to_with_sudo, :roles => :app do
     run "#{sudo} mkdir -p #{deploy_to}"
-    run "#{sudo} chown #{admin_runner}:#{admin_runner} #{deploy_to}"
+    run "#{sudo} chown #{admin_runner}:users #{deploy_to}"
   end
 
   task :write_upstart_script, :roles => :app do
@@ -59,8 +59,13 @@ UPSTART
     run "#{sudo} mv /tmp/#{application}_upstart.conf /etc/init/#{application}_#{node_env}.conf"
   end
 
+  task :npm_update, :roles => :app do
+    run "cd #{release_path}; /usr/local/bin/npm install socket.io"
+  end
+
 end
 
 before 'deploy:setup', 'deploy:create_deploy_to_with_sudo'
 after 'deploy:setup', 'deploy:write_upstart_script'
+after "deploy:finalize_update", "deploy:npm_update"
 
