@@ -93,7 +93,7 @@ io.sockets.on 'connection', (socket) ->
     else
       buffer[socket.id] = message
 
-    socket.broadcast.volatile.emit 'player', broadcast
+    socket.broadcast.emit 'player', broadcast
   socket.on 'animation', (message) ->
     return if message.type != 'blast'
     animPos = 0
