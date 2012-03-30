@@ -127,8 +127,8 @@ getDrawImage = (ctx, img) ->
       player.scale = -1 if player.dx < 0
       player.scale = 1 if player.dx > 0
 
-    players[0].dx = 0
-    players[0].dy = 0
+    #players[0].dx = 0
+    #players[0].dy = 0
     drawMovingWaves ctx, time
     drawBobbingImage ctx, img, time,       500, 233, w/2,  h/2
     
@@ -393,8 +393,8 @@ $ ->
     animating = !animating
   
   setInterval ->
-    players[0].dx += (pressed.right - pressed.left)*5
-    players[0].dy += (pressed.down - pressed.up)*5
+    players[0].dx = (pressed.right - pressed.left)*5
+    players[0].dy = (pressed.down - pressed.up)*5
 
     sendPlayer players[0]
 
