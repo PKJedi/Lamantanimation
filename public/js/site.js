@@ -1,6 +1,5 @@
 (function() {
-  var animateNext, animating, drawBobbingImage, drawMovingWaves, drawPlayerImage, drawPlayerText, drawText, drawTextBubble, flashRows, generateWavePositions, getDrawImage, h, hostImages, hostParts, lastTime, originPos, scale, w, waiterProto, wavePositions, welcomeScreen,
-    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var animateNext, animating, drawBobbingImage, drawMovingWaves, drawPlayerImage, drawPlayerText, drawText, drawTextBubble, flashRows, generateWavePositions, getDrawImage, h, hostImages, hostParts, lastTime, originPos, scale, w, waiterProto, wavePositions, welcomeScreen;
 
   drawBobbingImage = function(ctx, img, time, w, h, x, y) {
     ctx.save();
@@ -446,12 +445,11 @@
       var lastPlayerSent;
       lastPlayerSent = {};
       return function(player) {
-        var always, item, key, playerToSend;
+        var item, key, playerToSend;
         playerToSend = {};
-        always = ['host'];
         for (key in player) {
           item = player[key];
-          if (__indexOf.call(always, key) >= 0 || (key !== 'Image' && !(key in lastPlayerSent && lastPlayerSent[key] === item))) {
+          if (key !== 'Image' && !(key in lastPlayerSent && lastPlayerSent[key] === item)) {
             playerToSend[key] = item;
           }
         }
@@ -468,7 +466,14 @@
         }
         if ($.isEmptyObject(playerToSend)) return;
         socket.emit('player', playerToSend);
-        return lastPlayerSent = playerToSend;
+        for (key in playerToSend) {
+          item = playerToSend[key];
+          lastPlayerSent[key] = item;
+        }
+        if (playerToSend.x != null) {
+          lastPlayerSent.dx = 0;
+          return lastPlayerSent.dy = 0;
+        }
       };
     })();
     editedText = false;

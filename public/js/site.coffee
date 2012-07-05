@@ -335,9 +335,8 @@ $ ->
     lastPlayerSent = {}
     (player) ->
       playerToSend = {}
-      always = ['host']
       for key, item of player
-        playerToSend[key] = item if key in always || (key != 'Image' && !(key of lastPlayerSent && lastPlayerSent[key] == item))
+        playerToSend[key] = item if (key != 'Image' && !(key of lastPlayerSent && lastPlayerSent[key] == item))
 
       if player.dx != 0 || player.dy != 0
         delete playerToSend.x
@@ -354,7 +353,11 @@ $ ->
         return
 
       socket.emit 'player', playerToSend
-      lastPlayerSent = playerToSend
+      for key, item of playerToSend
+        lastPlayerSent[key] = item
+      if playerToSend.x?
+        lastPlayerSent.dx = 0
+        lastPlayerSent.dy = 0
   
   editedText = false
   $('textarea').bind 'keydown', ->
