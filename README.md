@@ -12,7 +12,12 @@ served by a node.js server.
 - socket.io
 - coffee-script
 - less
+- haproxy, nginx or something else for serving static files
 - for deployment: ruby, rubygems and capistrano
+
+## Serving
+
+See docs/haproxy.cfg and docs/nginx.vhost for an example.
 
 ## State
 

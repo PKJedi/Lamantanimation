@@ -241,9 +241,7 @@ $ ->
     h /= scale
     wavePositions = generateWavePositions()
   
-  port = 8081
-  port = 80 if $.browser.opera
-  window.socket = io.connect('http://tappe.lu:' + port)
+  window.socket = io.connect()
   socket.on 'player', (message) ->
     found = false
     for player in players

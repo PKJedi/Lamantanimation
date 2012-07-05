@@ -29,7 +29,7 @@ footer = '''
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <!--[if IE]><script src="/js/html5.js"></script><![endif]-->
   <script src="/js/mt.js"></script> <!-- Mersenne Twister for seedable random -->
-  <script src="http://[HOST]/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="/js/site.js"></script>
 <audio preload="auto" autobuffer audio="true" src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3">
   <source src="Nerf_Herder_-_Stand_By_Your_Manatee.ogg" type="audio/ogg; codecs=vorbis" />
@@ -53,11 +53,6 @@ server = http.createServer (req, res) ->
   ]
   responseString = pageString page...
 
-  host = req.headers.host
-  if host.indexOf(':') == -1
-    host += ':' + port
-
-  responseString = responseString.replace /\[HOST\]/, host
   res.end responseString
 server.listen port
 
