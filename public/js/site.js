@@ -455,7 +455,7 @@
       var lastPlayerSent;
       lastPlayerSent = {};
       return function(player) {
-        var always, item, key, playerToSend, _results;
+        var always, item, key, playerToSend;
         playerToSend = {};
         always = ['host'];
         for (key in player) {
@@ -475,15 +475,9 @@
           playerToSend.x = player.x;
           playerToSend.y = player.y;
         }
-        if (!$.isEmptyObject(playerToSend)) {
-          socket.emit('player', playerToSend);
-          _results = [];
-          for (key in playerToSend) {
-            item = playerToSend[key];
-            _results.push(lastPlayerSent[key] = item);
-          }
-          return _results;
-        }
+        if ($.isEmptyObject(playerToSend)) return;
+        socket.emit('player', playerToSend);
+        return lastPlayerSent = playerToSend;
       };
     })();
     editedText = false;

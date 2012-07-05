@@ -360,10 +360,11 @@ $ ->
         playerToSend.x = player.x
         playerToSend.y = player.y
 
-      if not $.isEmptyObject playerToSend
-        socket.emit 'player', playerToSend
-        for key, item of playerToSend
-          lastPlayerSent[key] = item
+      if $.isEmptyObject playerToSend
+        return
+
+      socket.emit 'player', playerToSend
+      lastPlayerSent = playerToSend
   
   editedText = false
   $('textarea').bind 'keydown', ->
