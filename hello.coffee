@@ -32,7 +32,7 @@ footer = '''
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/larva.js"></script>
   <script src="/js/site.js"></script>
-<audio preload="auto" autobuffer audio="true" src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3">
+<audio preload="auto" autobuffer audio="true">
   <source src="Nerf_Herder_-_Stand_By_Your_Manatee.ogg" type="audio/ogg; codecs=vorbis" />
   <source src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3" type="audio/mpeg" />
 </audio>
@@ -79,6 +79,7 @@ io.sockets.on 'connection', (socket) ->
     message.id = socket.id
     broadcast = {}
     if buffer[socket.id]
+      broadcast.host = buffer[socket.id].host if buffer[socket.id].host?
       for key, value of message
         if value? && (typeof value != 'string' || value.length < 8096)
           buffer[socket.id][key] = value
