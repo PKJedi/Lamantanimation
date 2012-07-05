@@ -162,34 +162,19 @@
   };
 
   getDrawImage = function(ctx, img) {
-    var clearBuffer, drawImage;
-    clearBuffer = [];
+    var drawImage;
     return drawImage = function() {
-      var coords, player, playerImage, time, _i, _j, _k, _len, _len2, _len3;
+      var player, playerImage, time, _i, _len;
       if (!animating && !animateNext) return;
       animateNext = false;
       time = (new Date()).getTime();
-      ctx.clearRect(w / 2 - 300, h / 2 - 200, 600, 400);
-      for (_i = 0, _len = clearBuffer.length; _i < _len; _i++) {
-        coords = clearBuffer[_i];
-        ctx.clearRect.apply(ctx, coords);
-      }
-      clearBuffer.length = 0;
-      for (_j = 0, _len2 = players.length; _j < _len2; _j++) {
-        player = players[_j];
-        player.x += player.dx;
-        player.y += player.dy;
-        clearBuffer.push([w / 2 + player.x - 102, h / 2 + player.y - 143, 204, 200]);
-        if (player.scale == null) player.scale = 1;
-        if (player.dx < 0) player.scale = -1;
-        if (player.dx > 0) player.scale = 1;
-      }
+      ctx.clearRect(0, 0, w, h);
       drawMovingWaves(ctx, time);
       drawBobbingImage(ctx, img, time, 500, 233, w / 2, h / 2);
       ctx.font = '14px sans-serif';
       ctx.textBaseline = 'top';
-      for (_k = 0, _len3 = players.length; _k < _len3; _k++) {
-        player = players[_k];
+      for (_i = 0, _len = players.length; _i < _len; _i++) {
+        player = players[_i];
         playerImage = img;
         if (player.host && hostImages[player.host] && hostImages[player.host].width) {
           playerImage = hostImages[player.host];
@@ -280,7 +265,13 @@
     waiter = Object.create(waiterProto);
     waiter.link(img, ['/img/new_manatee.svg', '/img/new_manatee.png']);
     img.onload = function() {
-      return setInterval(getDrawImage(ctx, img), 35);
+      var animation, draw;
+      draw = getDrawImage(ctx, img);
+      animation = function(timestamp) {
+        draw();
+        return Larva.requestAnimationFrame(animation);
+      };
+      return Larva.requestAnimationFrame(animation);
     };
     waiter.check();
     hostImages = {
@@ -506,6 +497,15 @@
       return animating = !animating;
     });
     return setInterval(function() {
+      var player, _i, _len;
+      for (_i = 0, _len = players.length; _i < _len; _i++) {
+        player = players[_i];
+        player.x += player.dx;
+        player.y += player.dy;
+        if (player.scale == null) player.scale = 1;
+        if (player.dx < 0) player.scale = -1;
+        if (player.dx > 0) player.scale = 1;
+      }
       players[0].dx = (pressed.right - pressed.left) * 5;
       players[0].dy = (pressed.down - pressed.up) * 5;
       sendPlayer(players[0]);

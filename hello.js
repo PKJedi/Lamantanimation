@@ -9,7 +9,7 @@
 
   header = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="user-scalable=no, width=device-width" />\n  <title>tappe.lu</title>\n\n  <link href="/css/layout.css" media="screen" rel="stylesheet" type="text/css" >\n</head>\n<body>';
 
-  footer = '\n<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>\n<!--[if IE]><script src="/js/html5.js"></script><![endif]-->\n<script src="/js/mt.js"></script> <!-- Mersenne Twister for seedable random -->\n<script src="/socket.io/socket.io.js"></script>\n<script src="/js/site.js"></script>\n<audio preload="auto" autobuffer audio="true" src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3">\n<source src="Nerf_Herder_-_Stand_By_Your_Manatee.ogg" type="audio/ogg; codecs=vorbis" />\n<source src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3" type="audio/mpeg" />\n</audio>\n</body></html>';
+  footer = '\n<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>\n<!--[if IE]><script src="/js/html5.js"></script><![endif]-->\n<script src="/js/mt.js"></script> <!-- Mersenne Twister for seedable random -->\n<script src="/socket.io/socket.io.js"></script>\n<script src="/js/larva.js"></script>\n<script src="/js/site.js"></script>\n<audio preload="auto" autobuffer audio="true" src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3">\n<source src="Nerf_Herder_-_Stand_By_Your_Manatee.ogg" type="audio/ogg; codecs=vorbis" />\n<source src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3" type="audio/mpeg" />\n</audio>\n</body></html>';
 
   pageString = function() {
     var content;

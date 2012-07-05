@@ -30,6 +30,7 @@ footer = '''
   <!--[if IE]><script src="/js/html5.js"></script><![endif]-->
   <script src="/js/mt.js"></script> <!-- Mersenne Twister for seedable random -->
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/larva.js"></script>
   <script src="/js/site.js"></script>
 <audio preload="auto" autobuffer audio="true" src="Nerf_Herder_-_Stand_By_Your_Manatee.mp3">
   <source src="Nerf_Herder_-_Stand_By_Your_Manatee.ogg" type="audio/ogg; codecs=vorbis" />

@@ -107,28 +107,14 @@ drawPlayerImage = (ctx, x, y, image) ->
   ctx.restore()
 
 getDrawImage = (ctx, img) ->
-  clearBuffer = []
   drawImage = ->
     if !animating && !animateNext
       return
     animateNext = false
     time = (new Date()).getTime()
-    ctx.clearRect w/2 - 300, h/2 - 200, 600, 400
 
-    for coords in clearBuffer
-      ctx.clearRect coords...
-    clearBuffer.length = 0
+    ctx.clearRect 0, 0, w, h
 
-    for player in players
-      player.x += player.dx
-      player.y += player.dy
-      clearBuffer.push([w/2 + player.x - 102, h/2 + player.y - 143, 204, 200])
-      player.scale ?= 1
-      player.scale = -1 if player.dx < 0
-      player.scale = 1 if player.dx > 0
-
-    #players[0].dx = 0
-    #players[0].dy = 0
     drawMovingWaves ctx, time
     drawBobbingImage ctx, img, time,       500, 233, w/2,  h/2
     
@@ -220,7 +206,11 @@ $ ->
     '/img/new_manatee.png'
   ]
   img.onload = ->
-    setInterval (getDrawImage ctx, img), 35
+    draw = getDrawImage ctx, img
+    animation = (timestamp) ->
+      draw()
+      Larva.requestAnimationFrame animation
+    Larva.requestAnimationFrame animation
   waiter.check()
   
   hostImages = {lapsi: 'svg', punainen: 'png', sininen: 'png', 'xn--vihre-kra': 'png'}
@@ -392,6 +382,13 @@ $ ->
     animating = !animating
   
   setInterval ->
+    for player in players
+      player.x += player.dx
+      player.y += player.dy
+      player.scale ?= 1
+      player.scale = -1 if player.dx < 0
+      player.scale = 1 if player.dx > 0
+    
     players[0].dx = (pressed.right - pressed.left)*5
     players[0].dy = (pressed.down - pressed.up)*5
 
