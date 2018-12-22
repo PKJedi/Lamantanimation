@@ -231,7 +231,7 @@ $ ->
     h /= scale
     wavePositions = generateWavePositions()
   
-  window.socket = io.connect()
+  window.socket = io('http://tappe.lu:8081')
   socket.on 'player', (message) ->
     found = false
     for player in players

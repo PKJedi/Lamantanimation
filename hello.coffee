@@ -29,7 +29,7 @@ footer = '''
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <!--[if IE]><script src="/js/html5.js"></script><![endif]-->
   <script src="/js/mt.js"></script> <!-- Mersenne Twister for seedable random -->
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="http://tappe.lu:8081/socket.io/socket.io.js"></script>
   <script src="/js/larva.js"></script>
   <script src="/js/site.js"></script>
 <audio preload="auto" autobuffer audio="true">
@@ -57,19 +57,7 @@ server = http.createServer (req, res) ->
   res.end responseString
 server.listen port
 
-io = (require 'socket.io').listen server
-
-io.configure 'production', ->
-  io.enable 'browser client etag'
-  io.set 'log level', 1
-
-  io.set 'transports', [
-    'websocket'
-    'flashsocket'
-    'htmlfile'
-    'xhr-polling'
-    'jsonp-polling'
-  ]
+io = (require 'socket.io')(server)
 
 buffer = {}
 io.sockets.on 'connection', (socket) ->
